@@ -49,7 +49,7 @@ fprintf('phases    %4d    %4d     %4d     %4d     %4d     %4d\n', phases)
 fprintf(' CPU s   %5.1f   %5.1f    %5.1f    %5.1f    %5.1f    %5.1f\n', cpu_ctl)
 fprintf(' Risks  %5.4f  %5.4f   %5.4f   %5.4f   %5.4f   %5.4f\n', erisk)
 
-fprintf(' Results for the IPM sover by CVX; n=64\n')
+fprintf(' Results for the IPM solver by CVX; n=64\n')
 fprintf(' CPU s   %5.1f\n', cpu_ipm) 
 fprintf(' Risk   %5.4f\n',eripm)
 

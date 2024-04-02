@@ -137,14 +137,14 @@ while(1==1)
             end
         end
     end
-    if (upb<=tol*lwb)|(calls>=control.itrmax)
+    if (upb<=tol*lwb)||(calls>=control.itrmax)
         res.phase=phase;
         res.calls=calls;
         res.x=xbest;
         res.upb=upb;
         res.lwb=lwb;
         res.cpu=cputime-tstart;
-        if control.print<10000,
+        if control.print<10000
             fprintf('%8.1f Termination: phases %d calls %d lwb=%7.6f upb=%7.6f\n',...
                 res.cpu,phase,calls,lwb,upb);
         end
@@ -159,7 +159,7 @@ while(1==1)
     dup=upb-lvl;
     dlw=lvl-lwb;
     %
-    x=prox;
+    % x=prox;
     cvx_begin
     variable yt(nv,1)
     variable dlt
@@ -244,7 +244,7 @@ while(1==1)
             bsbest=bs;
         end
         for fl=1:3
-            if (flags(fl)==0)&(upb<=breaks(fl)*lwb)
+            if (flags(fl)==0)&&(upb<=breaks(fl)*lwb)
                 flags(fl)=1;
                 res.rep{fl}.phase=phase;
                 res.rep{fl}.calls=calls;
@@ -290,9 +290,9 @@ while(1==1)
             res.upb=upb;
             res.lwb=lwb;
             res.cpu=cputime-tstart;
-            if control.print<10000,
-                disp(sprintf('%8.1f Termination: phases %d calls %d lwb=%7.6f upb=%7.6f\n',...
-                    res.cpu,phase,calls,lwb,upb));
+            if control.print<10000
+                fprintf('%8.1f Termination: phases %d calls %d lwb=%7.6f upb=%7.6f\n',...
+                    res.cpu,phase,calls,lwb,upb);
             end
             return;
         end
@@ -349,7 +349,7 @@ while(1==1)
                     res.rep{fl}.x=xbest;
                     res.rep{fl}.upb=upb;
                     res.rep{fl}.lwb=lwb;
-                    if control.print<10000,
+                    if control.print<10000
                         fprintf('*** %8.1f Tolerance %3.2f phases: %d calls: %d lwb: %7.6f upb: %7.6f\n',...
                             res.rep{fl}.cpu,breaks(fl),phase,calls,lwb,upb);
                     end
@@ -425,7 +425,7 @@ while(1==1)
                 sep.e=zeros(K,1);
                 sep.d=0;
             else
-                [w,dw]=omega(x,pp);
+                [~,dw]=omega(x,pp);
                 sep.e=dw-lin;
                 sep.e=sep.e/norm(sep.e);
                 sep.d=sep.e'*(x-prox);
@@ -448,7 +448,7 @@ while(1==1)
 end
 end %endof NERMLT
 
-function Bundle=IniBundlePos(K,S,I);
+function Bundle=IniBundlePos(K,S,I)
 % s-th element of bundle: \sum_{i=1}^I\max[a_s^ix+b_s^i,0], A^i:1\times K
 % Bundle.S: # of elements
 % Bundle.K - K
@@ -494,19 +494,18 @@ for k=1:K
 end
 Mat=0.5*(Mat+Mat');
 [UU,DD]=eig(Mat);
-[evs,ind]=sort(-diag(DD));
-evs=-evs;
+[~,ind]=sort(-diag(DD));
 U=zeros(n,n);
 D=zeros(n,n);
 for i=1:n
     U(:,i)=UU(:,ind(i));
     D(i,i)=D(ind(i),ind(i));
-end;
+end
 %
 As=zeros(n,K);
 Bs=zeros(n,1);
 BAiU=dta.BAi*U;
-AiU=dta.Ai*U;
+% AiU=dta.Ai*U;
 for i=1:n
     Bs(i)=sum(BAiU(:,i).^2);
 end
@@ -538,31 +537,31 @@ for i=1:I
         bs(i)=b;
     end
 end
-if 0==1
-    zero=inf;
-    for i=1:100
-        if i==1
-            mun=mu;
-        else
-            10*rand(K,1);
-        end
-        Matn=dta.BAi'*dta.BAi;
-        for k=1:K
-            Matn=Matn-mun(k)*dta.sTAi{k}'*dta.sTAi{k};
-        end
-        Matn=0.5*(Matn+Matn');
-        ev=eig(Matn);
-        tru=sum(max(ev,0));
-        lwb=sum(max(as*mun+bs,0));
-        zero=min(zero,tru-lwb);
-    end
-    if abs(zero)>1.e-6
-        zero
-    end
-end
+% if 0==1
+%     zero=inf;
+%     for i=1:100
+%         if i==1
+%             mun=mu;
+%         else
+%             10*rand(K,1);
+%         end
+%         Matn=dta.BAi'*dta.BAi;
+%         for k=1:K
+%             Matn=Matn-mun(k)*dta.sTAi{k}'*dta.sTAi{k};
+%         end
+%         Matn=0.5*(Matn+Matn');
+%         ev=eig(Matn);
+%         tru=sum(max(ev,0));
+%         lwb=sum(max(as*mun+bs,0));
+%         zero=min(zero,tru-lwb);
+%     end
+%     if abs(zero)>1.e-6
+%         zero
+%     end
+% end
 end %endof GetPiecePos
 
-function Bundle=AddBundlePos(Bnd,as,bs);
+function Bundle=AddBundlePos(Bnd,as,bs)
 % s-th element of bundle: \sum_{i=1}^I\max[a_s^ix+b_s^i], a_s^i: 1\times K
 % Bundle.S: # of elements
 % Bundle.K - dimension of x
@@ -576,8 +575,8 @@ S=Bnd.S;
 K=Bnd.K;
 I=Bnd.I;
 Sf=Bnd.Sf;
-nv=Bnd.nv;
-nc=Bnd.nc;
+% nv=Bnd.nv;
+% nc=Bnd.nc;
 Bundle=Bnd;
 if Sf<Bnd.S
     pos=Sf+1;
@@ -608,12 +607,12 @@ function Bundle=AddBundlePosA(Bnd,as,bs,lmm) % check if this is the good one
 % \sum_it_s^i - t \leq 0
 % i=1,...,I,s=1,...,S
 
-S=Bnd.S;
+% S=Bnd.S;
 K=Bnd.K;
 I=Bnd.I;
 Sf=Bnd.Sf;
-nv=Bnd.nv;
-nc=Bnd.nc;
+% nv=Bnd.nv;
+% nc=Bnd.nc;
 Bundle=Bnd;
 if Sf<Bnd.S
     pos=Sf+1;
@@ -621,7 +620,7 @@ if Sf<Bnd.S
     cbase=(I+1)*(pos-1);
     Bundle.Sf=pos;
 else
-    [,ind]=min(lmm);
+    [~,ind]=min(lmm);
     pos=ind(1);
     cbase=(I+1)*(pos-1);
 end
